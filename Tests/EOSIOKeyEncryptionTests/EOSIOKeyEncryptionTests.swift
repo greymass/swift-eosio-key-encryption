@@ -45,4 +45,34 @@ final class EOSIOKeyEncryptionTests: XCTestCase {
         XCTAssertNotEqual(EncryptedPrivateKey.SecurityLevel.default, EncryptedPrivateKey.SecurityLevel.custom(0))
         XCTAssertNotEqual(EncryptedPrivateKey.SecurityLevel.default, EncryptedPrivateKey.SecurityLevel.high)
     }
+
+    func testCoding() {
+        let encryptedKey = EncryptedPrivateKey("SEC_K1_8vWLjFLTcvWNKY8wwfMKJJ3Sf278qb5xQgqXFzrRF44ECxACwoC3RPTj")
+
+        let abiEncoder = ABIEncoder()
+        let abiData: Data = try! abiEncoder.encode(encryptedKey)
+
+        XCTAssertEqual(
+            abiData.hexEncodedString(),
+            "00241feb8491b4fd5745396bb401bac0be2c7a85855b3b2b79eaafced1396765e315b7a93fec"
+        )
+
+        let jsonEncoder = JSONEncoder()
+        let jsonData = try! jsonEncoder.encode(encryptedKey)
+
+        XCTAssertEqual(
+            String(bytes: jsonData, encoding: .utf8)!,
+            "\"SEC_K1_8vWLjFLTcvWNKY8wwfMKJJ3Sf278qb5xQgqXFzrRF44ECxACwoC3RPTj\""
+        )
+
+        let abiDecoder = ABIDecoder()
+        let abiDecoded = try! abiDecoder.decode(EncryptedPrivateKey.self, from: abiData)
+
+        XCTAssertEqual(encryptedKey, abiDecoded)
+
+        let jsonDecoder = JSONDecoder()
+        let jsonDecoded = try! jsonDecoder.decode(EncryptedPrivateKey.self, from: jsonData)
+
+        XCTAssertEqual(encryptedKey, jsonDecoded)
+    }
 }

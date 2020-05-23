@@ -231,6 +231,61 @@ public extension PublicKey {
     }
 }
 
+// MARK: - ABI Coding conformance
+
+extension EncryptedPrivateKey: ABICodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        try self.init(stringValue: try container.decode(String.self))
+    }
+
+    public init(fromAbi decoder: ABIDecoder) throws {
+        let type = try decoder.decode(UInt8.self)
+        let data = try decoder.decode(Data.self, byteCount: 1 + 4 + 32)
+        if type == 0 {
+            try self.init(fromK1Data: data)
+        } else {
+            let typeName: String
+            switch type {
+            case 1:
+                typeName = "R1"
+            case 2:
+                typeName = "WA"
+            default:
+                typeName = "XX"
+            }
+            guard let instance = Self(fromUnknownData: data, ofType: typeName) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Unable to create EncryptedPrivateKey instance for unknown type: \(typeName)"
+                ))
+            }
+            self = instance
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(stringValue)
+    }
+
+    public func abiEncode(to encoder: ABIEncoder) throws {
+        let type: UInt8
+        switch keyType {
+        case "K1":
+            type = 0
+        case "R1":
+            type = 1
+        case "WA":
+            type = 2
+        default:
+            type = 255
+        }
+        try encoder.encode(type)
+        try encoder.encode(contentsOf: data)
+    }
+}
+
 // MARK: - Standard protocol conformances
 
 extension EncryptedPrivateKey: LosslessStringConvertible {
