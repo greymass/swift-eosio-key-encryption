@@ -14,7 +14,10 @@ let package = Package(
     targets: [
         .target(
             name: "EOSIOKeyEncryption",
-            dependencies: ["EOSIO", "Scrypt"]
+            dependencies: [
+                .product(name: "EOSIO", package: "swift-eosio"),
+                .product(name: "Scrypt", package: "swift-scrypt"),
+            ]
         ),
         .testTarget(
             name: "EOSIOKeyEncryptionTests",
