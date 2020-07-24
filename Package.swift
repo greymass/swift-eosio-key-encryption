@@ -8,8 +8,8 @@ let package = Package(
         .library(name: "EOSIOKeyEncryption", targets: ["EOSIOKeyEncryption"]),
     ],
     dependencies: [
-        .package(name: "EOSIO", url: "https://github.com/greymass/swift-eosio.git", .branch("master")),
-        .package(name: "Scrypt", url: "https://github.com/greymass/swift-scrypt.git", .branch("master")),
+        .package(url: "https://github.com/greymass/swift-eosio.git", .branch("master")),
+        .package(url: "https://github.com/greymass/swift-scrypt.git", .branch("master")),
     ],
     targets: [
         .target(
