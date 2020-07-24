@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "EOSIOKeyEncryption",
+    name: "swift-eosio-key-encryption",
     products: [
         .library(name: "EOSIOKeyEncryption", targets: ["EOSIOKeyEncryption"]),
     ],
