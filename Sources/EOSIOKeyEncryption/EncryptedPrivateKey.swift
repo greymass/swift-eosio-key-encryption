@@ -197,7 +197,7 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
         let privateKey = try PrivateKey(fromK1Data: decrypted)
         let publicKey = try privateKey.getPublic()
 
-       throw TestError.failed("checksum: \(checksum.hexEncodedString()) ||| ciphertext: \(ciphertext.hexEncodedString()) ||| password: \(password.hexEncodedString()) ||| salt: \(checksum.hexEncodedString()) ||| security: \(securityLevel) ||||||| decrypted.hexEncodedString: \(decrypted.hexEncodedString()) |||  decrypted privateKey.stringValue: \(privateKey.stringValue) ||| decrypted publicKey.checksum: \(publicKey.checksum.hexEncodedString())")
+       throw TestError.failed("checksum: \(checksum.hexEncodedString()) decrypted privateKey.stringValue: \(privateKey.stringValue) ||| decrypted publicKey.checksum: \(publicKey.checksum.hexEncodedString())")
 
         guard publicKey.checksum == checksum else {
             throw Error.invalidPassword
@@ -217,10 +217,9 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
 
         let aes = try AES(key: key, iv: iv).crypt(input: input, operation: operation)
         
-        throw TestError.failed("scrypt params: \(params) ||| hash \(hash.hashValue) ||| iv: \(iv.hexEncodedString()) ||| key: \(key.hexEncodedString()) ||| aes: \(aes.hexEncodedString())")
+        // throw TestError.failed("scrypt params: \(params) ||| hash \(hash.hashValue) ||| iv: \(iv.hexEncodedString()) ||| key: \(key.hexEncodedString()) ||| aes: \(aes.hexEncodedString())")
         
         return aes
-
     }
 }
 
