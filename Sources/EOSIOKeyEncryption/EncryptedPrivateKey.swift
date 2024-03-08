@@ -190,7 +190,6 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
         guard keyType == "K1" else {
             throw EncryptedPrivateKey.Error.unsupportedKeyType(keyType)
         }
-        throw TestError.failed("this is a test")
 
         var decrypted = try Self.crypt(ciphertext, password: password, salt: checksum, security: securityLevel, operation: .decrypt)
         decrypted.insert(0x80, at: 0)
@@ -198,9 +197,7 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
         let privateKey = try PrivateKey(fromK1Data: decrypted)
         let publicKey = try privateKey.getPublic()
 
-        print("checksum: \(checksum.hexEncodedString())")
-        print("publicKey.checksum: \(publicKey.checksum.hexEncodedString())")
-        print("privateKey \(privateKey.stringValue)")
+       throw TestError.failed("checksum: \(checksum.hexEncodedString()) ||| ciphertext: \(ciphertext.hexEncodedString()) ||| password: \(password.hexEncodedString()) ||| salt: \(checksum.hexEncodedString()) ||| security: \(securityLevel) ||||||| decrypted.hexEncodedString: \(decrypted.hexEncodedString()) |||  decrypted privateKey.stringValue: \(privateKey.stringValue) ||| decrypted publicKey.checksum: \(publicKey.checksum.hexEncodedString())")
 
         guard publicKey.checksum == checksum else {
             throw Error.invalidPassword
@@ -212,16 +209,18 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
     /// Encrypt or decrypt given input using password, salt and security level (scrypt params).
     fileprivate static func crypt(_ input: Data, password: Data, salt: Data, security: SecurityLevel, operation: AES.Operation) throws -> Data {
         let params = security.params
-        throw Error.parsingFailed("scrypt params: \(params)")
         let hash = try scrypt(password: Array(password), salt: Array(salt), length: 32 + 16, N: params.N, r: params.r, p: params.p)
-        throw Error.parsingFailed("scrypt params: \(params) hash \(hash)")
 
-        print("scrypt hash: \(hash)")
         let iv = Data(hash[0 ..< 16])
-        print("iv: \(iv)")
+        
         let key = Data(hash[16 ..< 48])
-        print("key: \(key)")
-        return try AES(key: key, iv: iv).crypt(input: input, operation: operation)
+
+        let aes = try AES(key: key, iv: iv).crypt(input: input, operation: operation)
+        
+        throw TestError.failed("scrypt params: \(params) ||| hash \(hash.hashValue) ||| iv: \(iv.hexEncodedString()) ||| key: \(key.hexEncodedString()) ||| aes: \(aes.hexEncodedString())")
+        
+        return aes
+
     }
 }
 
