@@ -66,6 +66,7 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
         case parsingFailed(_ message: String)
         case unsupportedKeyType(_ type: String)
         case invalidPassword
+        case encryptionFailed
     }
 
     private enum Storage: Equatable, Hashable {
@@ -201,7 +202,7 @@ public struct EncryptedPrivateKey: Equatable, Hashable {
     }
 }
 
-public extension PrivateKey {
+public extension PrivateKey {    
     /// Encrypt this private key using given password.
     /// - Attention: This is very compute intensive, call this on a background thread.
     func encrypted(using password: Data, securityLevel: EncryptedPrivateKey.SecurityLevel = .default) throws -> EncryptedPrivateKey {
@@ -220,7 +221,16 @@ public extension PrivateKey {
         data.append(contentsOf: checksum)
         data.append(contentsOf: encrypted)
 
-        return try EncryptedPrivateKey(fromK1Data: data)
+        let encryptedKey = try EncryptedPrivateKey(fromK1Data: data)
+
+        do {
+            try encryptedKey.decrypt(using: password)
+        } catch EncryptedPrivateKey.Error.invalidPassword {
+            print("Invalid certificate generated!!")
+            throw EncryptedPrivateKey.Error.encryptionFailed
+        }
+
+        return encryptedKey
     }
 }
 
