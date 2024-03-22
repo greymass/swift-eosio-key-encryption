@@ -9,7 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/greymass/swift-eosio.git", .branch("master")),
-        .package(url: "https://github.com/greymass/swift-scrypt.git", .branch("version-with-libscrypt-bug")),
+        .package(url: "https://github.com/greymass/swift-scrypt.git", .branch("master")),
     ],
     targets: [
         .target(

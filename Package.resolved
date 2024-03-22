@@ -32,8 +32,8 @@
         "package": "swift-scrypt",
         "repositoryURL": "https://github.com/greymass/swift-scrypt.git",
         "state": {
-          "branch": "version-with-libscrypt-bug",
-          "revision": "631f21c36bff63e33ad13353ee801b4a032dda15",
+          "branch": "master",
+          "revision": "be61ddc3c1efb9cb35de251afa88f4897c6cc255",
           "version": null
         }
       }
