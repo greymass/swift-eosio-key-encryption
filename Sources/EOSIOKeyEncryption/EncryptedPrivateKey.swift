@@ -226,7 +226,6 @@ public extension PrivateKey {
         do {
             try encryptedKey.decrypt(using: password)
         } catch EncryptedPrivateKey.Error.invalidPassword {
-            print("Invalid certificate generated!!")
             throw EncryptedPrivateKey.Error.encryptionFailed
         }
 
